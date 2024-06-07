@@ -5,9 +5,9 @@ import KeywordQuestion from './KeywordQuestion';
 const generateKeywords = (subject: string): { keyword: string, question: string, answer: string }[] => {
     if (subject === 'Solar System') {
         return [
-            { keyword: 'Jupiter', question: 'I am a Gas Giant and the biggest Planet in the Solar System. Who am I?', answer: 'Jupiter' },
-            { keyword: 'Mars', question: 'I am known as the Red Planet. Who am I?', answer: 'Mars' },
-            { keyword: 'Saturn', question: 'I have a prominent ring system. Who am I?', answer: 'Saturn' }
+            { keyword: 'jupiter', question: 'I am a Gas Giant and the biggest Planet in the Solar System. Who am I?', answer: 'jupiter' },
+            { keyword: 'mars', question: 'I am known as the Red Planet. Who am I?', answer: 'mars' },
+            { keyword: 'saturn', question: 'I have a prominent ring system. Who am I?', answer: 'saturn' }
         ];
     }
     return [];

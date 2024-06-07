@@ -18,15 +18,44 @@ const scrambleWord = (word: string): string => {
 
 const KeywordQuestion: React.FC<KeywordQuestionProps> = ({ keyword, question, correctAnswer, onNext }) => {
     const [userAnswer, setUserAnswer] = useState('');
+    const [scrambledKeyword, setScrambledKeyword] = useState('');
+    const [originalScrambledKeyword, setOriginalScrambledKeyword] = useState('');
     const [feedback, setFeedback] = useState('');
-    const [scrambledWord, setScrambledWord] = useState('');
 
     useEffect(() => {
-        setScrambledWord(scrambleWord(keyword));
+        const scrambled = scrambleWord(keyword);
+        setScrambledKeyword(scrambled);
+        setOriginalScrambledKeyword(scrambled);
         setUserAnswer(''); // Clear user answer on new keyword
     }, [keyword]);
 
-    const handleSubmit = () => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newInput = e.target.value;
+        const lastChar = newInput.slice(-1).toLowerCase();
+
+        if (newInput.length < userAnswer.length) {
+            // Character was deleted
+            const deletedChar = userAnswer.slice(-1).toLowerCase();
+            setScrambledKeyword((prev) => {
+                const originalIndex = originalScrambledKeyword.toLowerCase().indexOf(deletedChar);
+                return prev.slice(0, originalIndex) + deletedChar + prev.slice(originalIndex);
+            });
+        } else if (scrambledKeyword.toLowerCase().includes(lastChar)) {
+            // Character was added
+            setScrambledKeyword((prev) => {
+                const index = prev.toLowerCase().indexOf(lastChar);
+                return prev.slice(0, index) + prev.slice(index + 1);
+            });
+        } else {
+            setFeedback('Incorrect character!');
+            setTimeout(() => setFeedback(''), 1000);
+        }
+
+        setUserAnswer(newInput);
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
         if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
             setFeedback('Correct!');
             setTimeout(() => {
@@ -35,36 +64,19 @@ const KeywordQuestion: React.FC<KeywordQuestionProps> = ({ keyword, question, co
                 onNext();
             }, 1000);
         } else {
-            setFeedback('Incorrect. Try again.');
-        }
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newInput = e.target.value;
-        const lastChar = newInput.slice(-1).toLowerCase();
-
-        if (scrambledWord.toLowerCase().includes(lastChar)) {
-            setScrambledWord((prev) => {
-                const index = prev.toLowerCase().indexOf(lastChar);
-                return prev.slice(0, index) + prev.slice(index + 1);
-            });
-            setUserAnswer(newInput);
-        } else {
-            setFeedback('Incorrect character!');
+            setFeedback('Incorrect!');
             setTimeout(() => setFeedback(''), 1000);
         }
     };
 
     return (
         <div>
-            <p>{question}</p>
-            <p>Scrambled word: {scrambledWord}</p>
-            <input
-                type="text"
-                value={userAnswer}
-                onChange={handleInputChange}
-            />
-            <button onClick={handleSubmit}>Submit</button>
+            <h3>{question}</h3>
+            <p>Scrambled Word: {scrambledKeyword}</p>
+            <form onSubmit={handleSubmit}>
+                <input type="text" value={userAnswer} onChange={handleInputChange} />
+                <button type="submit">Submit</button>
+            </form>
             <p>{feedback}</p>
         </div>
     );

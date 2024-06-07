@@ -2,7 +2,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-const subjects = ['Solar System', 'Newtonian Mechanics', 'Biology', 'History'];
+const subjects = ['Solar System'];
 
 const SubjectSelection: React.FC = () => {
     const router = useRouter();
